@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMR Query Interface</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #1a1d27;
+      border-bottom: 1px solid #2e3148;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #7c6cf8;
+    }
+
+    header .subtitle {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .badge {
+      background: #2e3148;
+      color: #7c6cf8;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .query-box {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .query-box label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-row input {
+      flex: 1;
+      background: #0f1117;
+      border: 1px solid #2e3148;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-row input:focus {
+      border-color: #7c6cf8;
+    }
+
+    .input-row input::placeholder {
+      color: #444;
+    }
+
+    .input-row button {
+      background: #7c6cf8;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .input-row button:hover { background: #6a5be0; }
+    .input-row button:disabled { background: #3a3a5c; cursor: not-allowed; }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .examples span {
+      font-size: 11px;
+      color: #666;
+      margin-right: 4px;
+    }
+
+    .example-chip {
+      background: #1e2235;
+      border: 1px solid #2e3148;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .example-chip:hover {
+      border-color: #7c6cf8;
+      color: #7c6cf8;
+    }
+
+    .results-section { display: none; }
+
+    .sql-block {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .sql-block .block-label {
+      font-size: 11px;
+      color: #7c6cf8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .sql-block pre {
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 13px;
+      color: #a8d8a8;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 10px;
+      padding: 14px 20px;
+      flex: 1;
+      text-align: center;
+    }
+
+    .stat-card .num {
+      font-size: 24px;
+      font-weight: 700;
+      color: #7c6cf8;
+    }
+
+    .stat-card .lbl {
+      font-size: 11px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .table-wrap {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .table-wrap .block-label {
+      font-size: 11px;
+      color: #7c6cf8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 14px 20px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    thead th {
+      background: #12141e;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #2e3148;
+    }
+
+    tbody tr { border-bottom: 1px solid #1e2235; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1e2235; }
+
+    tbody td {
+      padding: 10px 16px;
+      font-size: 13px;
+      color: #ccc;
+    }
+
+    .error-box {
+      background: #2a1a1a;
+      border: 1px solid #5c2e2e;
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: #f88;
+      font-size: 13px;
+      display: none;
+    }
+
+    .spinner {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .spinner::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #333;
+      border-top-color: #7c6cf8;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #555;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">EMR Query</div>
+    <div class="subtitle">Natural Language Interface</div>
+  </div>
+  <div class="badge">Powered by Groq + Supabase</div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Ask anything about your patients</h1>
+    <p>Type a question in plain English — no SQL required</p>
+  </div>
+
+  <div class="query-box">
+    <label>Your Question</label>
+    <div class="input-row">
+      <input type="text" id="questionInput" placeholder="e.g. Show me all diabetic patients admitted this year" />
+      <button id="runBtn" onclick="runQuery()">Run Query</button>
+    </div>
+    <div class="examples">
+      <span>Try:</span>
+      <div class="example-chip" onclick="setQuestion('Show me all diabetic patients')">All diabetic patients</div>
+      <div class="example-chip" onclick="setQuestion('List patients with hypertension')">Hypertension patients</div>
+      <div class="example-chip" onclick="setQuestion('Show all current admissions')">Current admissions</div>
+      <div class="example-chip" onclick="setQuestion('Which patients are on Metformin?')">Patients on Metformin</div>
+      <div class="example-chip" onclick="setQuestion('Show all female patients')">Female patients</div>
+      <div class="example-chip" onclick="setQuestion('List all active medications')">Active medications</div>
+    </div>
+  </div>
+
+  <div class="spinner" id="spinner">Running query</div>
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="results-section" id="resultsSection">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num" id="rowCount">0</div>
+        <div class="lbl">Rows Returned</div>
+      </div>
+      <div class="stat-card" style="flex:3; text-align:left;">
+        <div class="block-label">Generated SQL</div>
+        <pre id="sqlOutput"></pre>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="block-label">Results</div>
+      <div id="tableContainer"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const input = document.getElementById('questionInput');
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') runQuery(); });
+
+  function setQuestion(q) {
+    input.value = q;
+    input.focus();
+  }
+
+  async function runQuery() {
+    const question = input.value.trim();
+    if (!question) return;
+
+    const btn = document.getElementById('runBtn');
+    const spinner = document.getElementById('spinner');
+    const errorBox = document.getElementById('errorBox');
+    const resultsSection = document.getElementById('resultsSection');
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    errorBox.style.display = 'none';
+    resultsSection.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || 'Unknown error');
+      }
+
+      document.getElementById('rowCount').textContent = data.row_count;
+      document.getElementById('sqlOutput').textContent = data.generated_sql;
+      renderTable(data.results);
+      resultsSection.style.display = 'block';
+
+    } catch (err) {
+      errorBox.textContent = 'Error: ' + err.message;
+      errorBox.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+    }
+  }
+
+  function renderTable(rows) {
+    const container = document.getElementById('tableContainer');
+    if (!rows || rows.length === 0) {
+      container.innerHTML = '<div class="empty-state">No results found.</div>';
+      return;
+    }
+    const cols = Object.keys(rows[0]);
+    let html = '<table><thead><tr>';
+    cols.forEach(c => { html += `<th>${c}</th>`; });
+    html += '</tr></thead><tbody>';
+    rows.forEach(row => {
+      html += '<tr>';
+      cols.forEach(c => { html += `<td>${row[c] ?? '-'}</td>`; });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+</script>
+
+</body>
+</html>
