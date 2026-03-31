@@ -25,7 +25,9 @@ Built with a focus on **privacy**, **accuracy**, and **speed** — all patient d
 ### Web UI
 Type any medical question and get instant results:
 
-![EMR Query UI](https://raw.githubusercontent.com/himanshu2904hk/-EMR-Natural-Language-Query-Interface/main/static/demo-ui.png)
+![EMR Query UI - All Patients](https://raw.githubusercontent.com/himanshu2904hk/-EMR-Natural-Language-Query-Interface/main/static/demo-ui.png)
+
+![EMR Query UI - Hypertension](https://raw.githubusercontent.com/himanshu2904hk/-EMR-Natural-Language-Query-Interface/main/static/demo-ui-2.png)
 
 ### Example Queries & Results
 
