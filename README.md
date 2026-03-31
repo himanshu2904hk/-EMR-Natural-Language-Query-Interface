@@ -23,10 +23,10 @@ Built with a focus on **privacy**, **accuracy**, and **speed** — all patient d
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
-|---|---|
+| --- | --- |
 | Language | Python |
 | LLM Orchestration | LangChain |
-| AI Model | Claude API (Anthropic) |
+| AI Model | Grok API (xAI) |
 | Backend API | FastAPI |
 | Database | PostgreSQL / EMR Database |
 
@@ -41,7 +41,7 @@ User (Plain English Input)
         ↓
   LangChain Pipeline
         ↓
-   Claude API (LLM)
+   Grok API (LLM)
         ↓
   SQL Query Generator
         ↓
@@ -58,7 +58,7 @@ User (Plain English Input)
 
 - Python 3.9+
 - PostgreSQL
-- Anthropic API Key
+- Grok API Key
 
 ### Installation
 
@@ -72,7 +72,7 @@ pip install -r requirements.txt
 
 # Set up environment variables
 cp .env.example .env
-# Add your ANTHROPIC_API_KEY and DATABASE_URL to .env
+# Add your GROK_API_KEY and DATABASE_URL to .env
 
 # Run the application
 uvicorn main:app --reload
@@ -96,6 +96,6 @@ Built for healthcare environments where clinical staff need fast access to patie
 
 ## 👤 Author
 
-**Himanshu Kumar Lenka**  
-AI/ML Engineer  
+**Himanshu Kumar Lenka**
+AI/ML Engineer
 [LinkedIn](https://linkedin.com/in/) | [GitHub](https://github.com/himanshu2904hk)
